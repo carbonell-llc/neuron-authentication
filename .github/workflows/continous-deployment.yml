@@ -1,0 +1,39 @@
+# This is an automated deployment to NeuronGL Servers via SSH
+name: CD
+
+# Deploys only after a push into the "master" branch
+on:
+  push:
+    branches: [ master ]
+
+# Deploys code in "dist/" directory to a remote server(s)
+jobs:
+  # Code deployment definition
+  deploy:
+    # Runs deployment container on Ubuntu 18.04 - to match target container
+    runs-on: ubuntu-18.04
+
+    # Vultr server deployment steps
+    steps:
+      # Copies "dist/" into container
+    - name: Copy Repository into Container Directory
+      uses: actions/checkout@v2
+      # Installs Node.js on container
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12.x'
+      # Installs npm dependencies
+    - name: Install npm dependencies
+      run: npm install
+      # Builds NPM Package
+    - name: Run build task
+      run: npm run build --if-present
+      # Copies code to remote server
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@v2.1.1
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.NEURONGL_SSH_KEY_PRIVATE }}
+          ARGS: "-rltgoDzvO --delete"
+          REMOTE_HOST: ${{ secrets.NEURONGL_HOST_DOMAIN }}
+          REMOTE_USER: ${{ secrets.NEURONGL_SSH_USER }}
