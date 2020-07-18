@@ -20,9 +20,9 @@ jobs:
       uses: actions/checkout@v2
       # Installs Node.js on container
     - name: Install Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v2.1.0
       with:
-        node-version: '12.x'
+        node-version: '12'
       # Installs npm dependencies
     - name: Install npm dependencies
       run: npm install
